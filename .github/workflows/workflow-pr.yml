@@ -18,3 +18,16 @@ jobs:
           reporter: 'github-pr-review'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run unit tests
+        run: |
+          pip install html-testRunner coverage
+          cd app
+          python -m unittest test/unit/test.py
+          python -m coverage run -m unittest test/unit/test.py
+          python -m coverage xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
